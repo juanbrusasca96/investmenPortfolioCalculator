@@ -1,29 +1,44 @@
 //calcula la asignacion de activos para una cartera de inversion segun la edad y el perfil del inversor
-let edad = prompt("ingrese su edad");
-alert("ingrese su perfil del inversor");
-let perfilInversor = pedirValor("perfil");
-const perfiles = [];
-perfiles.push("conservador");
-perfiles.push("moderado");
-perfiles.push("agresivo");
-perfilInversor = perfiles[perfilInversor]; //seleccino el perfil del inversor mediante un indice, el cual me lo devuelve la funcion pedir valor
-const porcentajesCarteraDavidSwensen = [30, 20, 15, 5, 15, 15]; //guarda por defecto los pesos porcentuales de la cartera original de swensen
 
 function redondearADosDecimales(num) { //redondea los numeros a dos decimales
     return +(Math.round(num + "e+2") + "e-2");
 }
 
+function obtenerNumeroFrecuencia(string) { //funcion que devuelve la cantidad de periodos que entran en un año. por ej: hay 4 trimestres en un año
+    if (string === "Anual") {
+        string = 1;
+    }
+    else if (string === "Dos veces al año") {
+        string = 2;
+    }
+    else if (string === "Cada trimestre") {
+        string = 4;
+    }
+    else if (string === "Cada mes") {
+        string = 12;
+    }
+    return string;
+}
+
+const separadorMiles = (number) => { //funcion que sirve para agregar un separador de miles a un numero
+    const exp = /(\d)(?=(\d{3})+(?!\d))/g;
+    const rep = '$1.';
+    let arr = number.toString().split('.');
+    arr[0] = arr[0].replace(exp, rep);
+    return arr[1] ? arr.join('.') : arr[0];
+}
+
 class Persona {
-    constructor(edad, perfil) { 
+    constructor(edad, perfil) {
         this.edad = edad;
         this.perfil = perfil;
-        if (perfil === "conservador") { //asigna la regla correspondiente segun el perfil del inversor
+        if (perfil === "Conservador") { //asigna la regla correspondiente segun el perfil del inversor
             this.regla = 100;
         }
-        else if (perfil === "moderado") {
+        else if (perfil === "Moderado") {
             this.regla = 110;
         }
-        else if (perfil === "agresivo") {
+        else if (perfil === "Agresivo") {
             this.regla = 120;
         }
         if (this.edad > this.regla) { //si la edad es mayor que la regla, la edad es la regla. por ej: si pongo que tengo 105 años y utilizo la regla del 100, voy a tener como consecuencia porcentajes negativos en algunos activos, por lo tanto el maximo de la edad debe ser 100 para este caso y aunque la persona siguiera creciendo su cartera ya llego al tope de cartera conservadora
@@ -84,7 +99,7 @@ class ETF { //clase etf, los cuales tendran un nombre, un porcentaje dentro de l
     }
 }
 
-const persona = new Persona(edad, perfilInversor);
+const porcentajesCarteraDavidSwensen = [30, 20, 15, 5, 15, 15]; //guarda por defecto los pesos porcentuales de la cartera original de swensen
 
 const spy = new ETF("SPY", 0, 10.97);
 const vnq = new ETF("VNQ", 0, 9.12);
@@ -93,88 +108,142 @@ const vwo = new ETF("VWO", 0, 2.29);
 const tip = new ETF("TIP", 0, 4.08);
 const tlt = new ETF("TLT", 0, 6.38);
 const carteraDavidSwensen = [spy, vnq, vea, vwo, tip, tlt]; //cargo los etf que conformaran la cartera de swensen por defecto. dichos etf todavia no tienen un porcentaje asignado dentro de la cartera
+let formularioCartera = document.getElementById("formularioCartera"); //selecciono el nodo del div de la parte del formulario correspondiente a la composicion de cartera
+let mensaje = document.createElement("p");//creo un parrafo que luego me servira para mostrar el resultado de la composicion de la cartera
 
-persona.conformarCartera(carteraDavidSwensen, persona.cartera, persona.acciones, persona.bonos); //asigno el porcentaje de cada etf dentro de la cartera, teniendo en cuenta la parte de acciones y la de bonos, las cuales se calculan teniendo en cuenta la regla y la edad (esto ultimo se hace en el constructor de la clase persona)
+let formularioInteres = document.getElementById("formularioInteres"); //selecciono el nodo del div de la parte del formulario correspondiente a la calculadora de interes compuesto
+let formulario = document.createElement("form"); //creo un form que luego sera el formulario de la calculadora de interes compuesto
 
-let mensaje = "";
+let botonCartera = document.getElementById("botonCartera"); //selecciono el nodo del boton que calculara la composicion de cartera
 
-for (let i = 0; i < persona.cartera.length; i++) {
-    mensaje += persona.cartera[i].nombre + ": " + persona.cartera[i].porcentaje + "%\n"; //guardo los porcentajes de cada etf junto con su nombre para luego mostrarlos en el mensaje que sale por alert
-}
+botonCartera.addEventListener("click", () => { //cuando se hace click en el boton de calcular en la seccion de composicion de cartera se ejecurara lo siguiente
+    let edad = document.getElementById("edadCartera").value; //obtengo el valor de la edad
+    let perfilInversor = document.getElementById("selectCartera").value; //obtengo el perfil del inversor
 
-mensaje += "Esta cartera tiene un rendimiento promedio de " + redondearADosDecimales(persona.calcularRendimientoCartera(persona.cartera)) +
-    " %, teniendo en cuenta los rendimientos de todos los intrumentos " +
-    "(desde enero 2008, hasta diciembre 2021) y su peso porcentual dentro de la cartera.\n" +
-    "A su vez esta cartera tiene un rendimiento promedio en los proximos 50 años de " + redondearADosDecimales(persona.calcularRendimientoPromedio50Anos()) +
-    " %, teniendo en cuenta que las posiciones de la cartera se van modificando en su valor porcentual año a año.\n" + 
-    "Puede usar alguno de estos valores (recomendamos el ultimo, ya que tiene en cuenta el cambio de las posiciones de la cartera a largo plazo) " + 
-    "en nuestra calculadora de interes compuesto que se encuentra mas abajo."
+    const persona = new Persona(edad, perfilInversor); //creo un objeto persona con los datos de edad y perfil antes obtenidos del formulario
 
-alert(mensaje);
+    persona.conformarCartera(carteraDavidSwensen, persona.cartera, persona.acciones, persona.bonos); //asigno el porcentaje de cada etf dentro de la cartera, teniendo en cuenta la parte de acciones y la de bonos, las cuales se calculan teniendo en cuenta la regla y la edad (esto ultimo se hace en el constructor de la clase persona)
 
+    mensaje.innerHTML = "<br>";
 
-//calcula el interes compuesto segun los datos ingresados
-
-let balanceFinal = 0;
-let inversionInicial = prompt("ingrese la inversion inicial (solo valido enteros sin separador de miles)");
-let tasaInteres = prompt("ingrese la tasa de interes (en %)");
-alert("ingrese la frecuencia con la cual se aplicara este interes. ");
-let frecuenciaTasaInteres = pedirValor();
-let cantidadAños = prompt("ingrese la cantidad de años");
-let aporte = prompt("ingrese el aporte que va a realizar (solo valido enteros sin separador de miles)");
-alert("ingrese la frecuencia con la cual se realizaran estos aportes. ");
-let frecuenciaAporte = pedirValor();
-
-function pedirValor(perfil) { //funcion que pide un valor especifico y en caso de no estar dentro del rango sigue pidiendolo indefinidamente
-    let num = 0;
-    let valor = 0;
-    if (perfil === "perfil") { //si lo que pido es el perfil del inversor entra en esta seccion de la funcion
-        do {
-            num = prompt("Puede ser: 1 - conservador, 2 - moderado, 3 - agresivo. " +
-                "Cualquier otro numero ingresado sera ignorado y se le pedira que ingrese un numero nuevamente.");
-        } while (num < 1 || num > 3);
-        if (num == 1) { //valor toma 0, 1 o 2 porque luego esto servira como indice para acceder a un arreglo que contiene los 3 perfiles de inversor
-            valor = 0;
-        }
-        else if (num == 2) {
-            valor = 1;
-        }
-        else if (num == 3) {
-            valor = 2;
-        }
+    for (let i = 0; i < persona.cartera.length; i++) {
+        mensaje.innerHTML += persona.cartera[i].nombre + ": " + persona.cartera[i].porcentaje + "% <br>"; //guardo los porcentajes de cada etf junto con su nombre para luego mostrarlos en el mensaje que sale por alert
     }
-    else { //en caso de que lo que pida no sea el perfil del inversor se ejecuta esta seccion de la funcion
-        do {
-            num = prompt("Puede ser: 1 - anual, 2 - dos veces al año, 3 - cada trimestre, 4 - cada mes. " +
-                "Cualquier otro numero ingresado sera ignorado y se le pedira que ingrese un numero nuevamente.");
-        } while (num < 1 || num > 4);
-        if (num == 1) { //valor toma la cantidad de periodos seleccionados que hay en un año, por ejemplo si selecciono 3 - cada trimestre, hay 4 trimestres en un año, por lo tanto valor = 4
-            valor = 1;
-        }
-        else if (num == 2) {
-            valor = 2;
-        }
-        else if (num == 3) {
-            valor = 4;
-        }
-        else if (num == 4) {
-            valor = 12;
-        }
-    }
-    return valor;
-}
 
-tasaInteres = tasaInteres / 100; //convierto la tasa de interes a un valor porcentual
+    //mensaje que aparece mostrando los resultados de la composicion de la cartera
+    mensaje.innerHTML += "Esta cartera tiene un rendimiento promedio de " + redondearADosDecimales(persona.calcularRendimientoCartera(persona.cartera)) +
+        " %, teniendo en cuenta los rendimientos de todos los intrumentos " +
+        "(desde enero 2008, hasta diciembre 2021) y su peso porcentual dentro de la cartera.<br>" +
+        "A su vez esta cartera tiene un rendimiento promedio en los proximos 50 años de " + redondearADosDecimales(persona.calcularRendimientoPromedio50Anos()) +
+        " %, teniendo en cuenta que las posiciones de la cartera se van modificando en su valor porcentual año a año.<br>" +
+        "Puede usar alguno de estos valores (recomendamos el ultimo, ya que tiene en cuenta el cambio de las posiciones de la cartera a largo plazo) " +
+        "en nuestra calculadora de interes compuesto que se encuentra mas abajo."
+    formularioCartera.append(mensaje);//agrego este mensaje a la parte final del div del formulario de la cartera
 
-balanceFinal = inversionInicial * Math.pow(1 + tasaInteres / frecuenciaTasaInteres, frecuenciaTasaInteres * cantidadAños) + aporte * frecuenciaAporte * (Math.pow(1 + tasaInteres / frecuenciaTasaInteres, frecuenciaTasaInteres * cantidadAños) - 1) / (tasaInteres / frecuenciaTasaInteres); //calculo el balance final teniendo en cuenta la formula de interes compuesto
-balanceFinal = Math.round(balanceFinal); //redondeo el balance final
+    //creo el formulario de interes compuesto
+    formulario.innerHTML = `<fieldset>
+    <legend>Calculadora de interes compuesto</legend>
+    <div class="mb-3">
+        <label for="disabledTextInput" class="form-label">Inversion inicial</label>
+        <input type="text" id="inversionInicial" class="form-control"
+            placeholder="ingresar enteros sin separador de miles">
+    </div>
+    <div class="mb-3">
+        <label for="disabledTextInput" class="form-label">Tasa de interes</label>
+        <input type="text" id="tasaInteres" class="form-control" placeholder="ingresar valor en %">
+    </div>
+    <div class="mb-3">
+        <label for="disabledSelect" class="form-label">Frecuencia de la tasa de interes</label>
+        <select id="selectInteresFrecuenciaTasa" class="form-select">
+            <option selected disable hidden>Selecione aqui</option>
+            <option>Anual</option>
+            <option>Dos veces al año</option>
+            <option>Cada trimestre</option>
+            <option>Cada mes</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="disabledTextInput" class="form-label">Cantidad de años</label>
+        <input type="text" id="cantidadAnos" class="form-control">
+    </div>
+    <div class="mb-3">
+        <label for="disabledTextInput" class="form-label">Aporte a realizar</label>
+        <input type="text" id="aporte" class="form-control"
+            placeholder="ingresar enteros sin separador de miles">
+    </div>
+    <div class="mb-3">
+        <label for="disabledSelect" class="form-label">Frecuencia de los aportes</label>
+        <select id="selectInteresFrecuenciaAporte" class="form-select">
+            <option selected disable hidden>Selecione aqui</option>
+            <option>Anual</option>
+            <option>Dos veces al año</option>
+            <option>Cada trimestre</option>
+            <option>Cada mes</option>
+        </select>
+    </div>
+    <button type="button" class="btn btn-primary" id="botonInteres">Calcular</button>
+</fieldset>
+<br>`;
 
-const separadorMiles = (number) => { //funcion que sirve para agregar un separador de miles a un numero
-    const exp = /(\d)(?=(\d{3})+(?!\d))/g;
-    const rep = '$1.';
-    let arr = number.toString().split('.');
-    arr[0] = arr[0].replace(exp, rep);
-    return arr[1] ? arr.join('.') : arr[0];
-}
+    formularioInteres.append(formulario);//agrego el formulario de interes compuesto en la seccion (div) correspondiente
 
-alert("el balance final sera: " + separadorMiles(balanceFinal)); //muestro el balance final, redondeado y con separador de miles
+    //calcula el interes compuesto segun los datos ingresados
+
+    let outputInteres = document.createElement("p"); //creo un parrafo que luego me servira para mostrar los resultador del calculo del interes compuesto
+
+    let botonInteres = document.getElementById("botonInteres"); //obtengo el nodo correspondiente al boton de calcular de la parte del calculo de interes compuesto
+
+    botonInteres.addEventListener("click", () => {//cuando hago click en el boton de calcular correspondiente a la seccion de interes compuesto se ejecuta lo siguiente
+        let balanceFinal = 0;
+        let inversionInicial = parseFloat(document.getElementById("inversionInicial").value);//obtengo el valor de la inversion inicial
+        let tasaInteres = parseFloat(document.getElementById("tasaInteres").value);//obtengo el valor de la tasa de interes
+        let frecuenciaTasaInteres = document.getElementById("selectInteresFrecuenciaTasa").value;//obtengo la frecuencia en las cual se aplicara la tasa de interes
+        let cantidadAnos = parseFloat(document.getElementById("cantidadAnos").value);//obtengo del valor de la cantidad de años
+        let aporte = parseFloat(document.getElementById("aporte").value);//obtengo el valor del aporte que se va a realizar
+        let frecuenciaAporte = document.getElementById("selectInteresFrecuenciaAporte").value;//obtengo al frecuencia con la que se realizara el aporte
+
+        frecuenciaTasaInteres = obtenerNumeroFrecuencia(frecuenciaTasaInteres);//transformo la frecuencia obtenida en cantidad de veces que dicha frecuencia ocurre en un año
+        frecuenciaAporte = obtenerNumeroFrecuencia(frecuenciaAporte);//transformo la frecuencia obtenida en cantidad de veces que dicha frecuencia ocurre en un año
+
+        tasaInteres = (tasaInteres / 100) + 1; //convierto la tasa de interes a un valor de unidad. por ej: una tasa del 10% sera de 1.1
+
+        //calculo la cantidad de periodos teniendo en cuenta la frecuencia mas chica. por ej: si la frecuencia de aporte es 2 
+        //(dos veces al año), y la de tasa de interes es 4 (cada trimestre) entonces la cantidad de periodos sera años*2. 
+        //Esto se hace asi debido a que necesito trabajar con "periodos" mas que con años, al final de dichos periodos se 
+        //calculara el interes y se sumara el aporte
+        let cantidadPeriodos = cantidadAnos * Math.min(frecuenciaAporte, frecuenciaTasaInteres);
+
+        //calculo las veces que entra la frecuencia mas grande dentro de la mas chica. por ej: si la frecuencia de aporte es 2 
+        //(dos veces al año), y la de tasa de interes es 4 (cada trimestre), entonces sabemos que entran dos trimestres en cada semestre.
+        //Cada semestre sera un periodo (en la cual luego calcularemos el interes y sumaremos los aportes) y en la linea anterior 
+        //se calculo la cantidad de periodos totales
+        let vecesQueEntra = Math.max(frecuenciaAporte, frecuenciaTasaInteres) / Math.min(frecuenciaAporte, frecuenciaTasaInteres);
+
+        balanceFinal = inversionInicial; //seteo el primer valor del balance final que sera la inversion inicial
+
+        for (let i = 0; i < cantidadPeriodos; i++) { //recorro todos los periodos
+            if (frecuenciaTasaInteres < frecuenciaAporte) { //si la frecuencia de la tasa de interes es mas chica que la de aporte, quiere decir que el periodo me lo marca la tasa de interes
+                for (let j = 0; j < vecesQueEntra; j++) { //recorro la cantidad de veces que entra la frecuencia mas chica (entre aporte y tasa de interes) dentro de cada periodo
+                    balanceFinal += aporte; //al ser mas chica la frecuencia de tasa de interes (por ej: frecuenciaTasaInteres = 2 (dos veces al año), frecuenciaAporte = 4 (cada trimestre)) debo sumar primero los aportes que se realizan dentro del periodo
+                }
+                balanceFinal = balanceFinal * tasaInteres;//cuando el periodo esta por finalizar y ya se sumaron todos los aportes se calcula la tasa de interes sobre el valor obtenido
+            }
+            else if (frecuenciaAporte === frecuenciaTasaInteres) { //si ambas frecuencias son iguales simplemente sumo el aporte y calculo la tasa de interes en cada periodo
+                balanceFinal += aporte;
+                balanceFinal = balanceFinal * tasaInteres;
+            }
+            else { //si la frecuencia de aporte es mas chica que la de la tasa de interes, quiere decir que el periodo me lo marca el aporte
+                balanceFinal += aporte; //al ser mas chica la frecuencia de tasa de interes (por ej: frecuenciaTasaInteres = 4 (cada trimestre), frecuenciaAporte = 2 (dos veces al año)) debo sumar el unico aporte que entra dentro del periodo
+                for (let j = 0; j < vecesQueEntra; j++) { //recorro la cantidad de veces que entra la frecuencia mas chica (entre aporte y tasa de interes) dentro de cada periodo
+                    balanceFinal = balanceFinal * tasaInteres;//calculo la tasa de interes sobre el balance. Esto se hace la cantidad de veces que la fecuencia de la tasa de interes se puede aplicar dentro del periodo
+                }
+            }
+        }
+
+        balanceFinal = Math.round(balanceFinal); //redondeo el balance final
+
+        outputInteres.innerText = "el balance final sera: " + separadorMiles(balanceFinal); //muestro el balance final, redondeado y con separador de miles
+
+        formularioInteres.append(outputInteres);//agrego el mensaje al final del div de la seccion de formulario de interes compuesto
+    });
+});
