@@ -1,33 +1,5 @@
 //calcula la asignacion de activos para una cartera de inversion segun la edad y el perfil del inversor
 
-function redondearADosDecimales(num) { //redondea los numeros a dos decimales
-    return +(Math.round(num + "e+2") + "e-2");
-}
-
-function obtenerNumeroFrecuencia(string) { //funcion que devuelve la cantidad de periodos que entran en un año. por ej: hay 4 trimestres en un año
-    if (string === "Anual") {
-        string = 1;
-    }
-    else if (string === "Dos veces al año") {
-        string = 2;
-    }
-    else if (string === "Cada trimestre") {
-        string = 4;
-    }
-    else if (string === "Cada mes") {
-        string = 12;
-    }
-    return string;
-}
-
-const separadorMiles = (number) => { //funcion que sirve para agregar un separador de miles a un numero
-    const exp = /(\d)(?=(\d{3})+(?!\d))/g;
-    const rep = '$1.';
-    let arr = number.toString().split('.');
-    arr[0] = arr[0].replace(exp, rep);
-    return arr[1] ? arr.join('.') : arr[0];
-}
-
 class Persona {
     constructor(edad, perfil) {
         this.edad = edad;
@@ -99,15 +71,59 @@ class ETF { //clase etf, los cuales tendran un nombre, un porcentaje dentro de l
     }
 }
 
+
+//inicializo todos los etyf (en objetos) posibles
+const spy = new ETF("SPY", 0, 10.66);
+const vnq = new ETF("VNQ", 0, 8.95);
+const vea = new ETF("VEA", 0, 3.49);
+const vwo = new ETF("VWO", 0, 5.73);
+const tip = new ETF("TIP", 0, 4.42);
+const tlt = new ETF("TLT", 0, 6.26);
+const ivv = new ETF("IVV", 0, 8.38);
+const voo = new ETF("VOO", 0, 15.1);
+const xlre = new ETF("XLRE", 0, 12.64);
+const iyr = new ETF("IYR", 0, 9.88);
+const idev = new ETF("IDEV", 0, 6.67);
+const schf = new ETF("SCHF", 0, 6.21);
+const eem = new ETF("EEM", 0, 7.62);
+const sche = new ETF("SCHE", 0, 2.78);
+const ivol = new ETF("IVOL", 0, 6.39);
+const ief = new ETF("IEF", 0, 4.48);
+const iusb = new ETF("IUSB", 0, 3.28);
+let etfs = [spy, vnq, vea, vwo, tip, tlt, ivv, voo, xlre, iyr, idev, schf, eem, sche, ivol, ief, iusb];//creo un array que alacenara todos los etfs posibles
+
+let carteraDavidSwensen = [spy, vnq, vea, vwo, tip, tlt]; //cargo los etf que conformaran la cartera de swensen por defecto. dichos etf todavia no tienen un porcentaje asignado dentro de la cartera
+
+function redondearADosDecimales(num) { //redondea los numeros a dos decimales
+    return +(Math.round(num + "e+2") + "e-2");
+}
+
+function obtenerNumeroFrecuencia(string) { //funcion que devuelve la cantidad de periodos que entran en un año. por ej: hay 4 trimestres en un año
+    if (string === "Anual") {
+        string = 1;
+    }
+    else if (string === "Dos veces al año") {
+        string = 2;
+    }
+    else if (string === "Cada trimestre") {
+        string = 4;
+    }
+    else if (string === "Cada mes") {
+        string = 12;
+    }
+    return string;
+}
+
+const separadorMiles = (number) => { //funcion que sirve para agregar un separador de miles a un numero
+    const exp = /(\d)(?=(\d{3})+(?!\d))/g;
+    const rep = '$1.';
+    let arr = number.toString().split('.');
+    arr[0] = arr[0].replace(exp, rep);
+    return arr[1] ? arr.join('.') : arr[0];
+}
+
 const porcentajesCarteraDavidSwensen = [30, 20, 15, 5, 15, 15]; //guarda por defecto los pesos porcentuales de la cartera original de swensen
 
-const spy = new ETF("SPY", 0, 10.97);
-const vnq = new ETF("VNQ", 0, 9.12);
-const vea = new ETF("VEA", 0, 3.49);
-const vwo = new ETF("VWO", 0, 2.29);
-const tip = new ETF("TIP", 0, 4.08);
-const tlt = new ETF("TLT", 0, 6.38);
-const carteraDavidSwensen = [spy, vnq, vea, vwo, tip, tlt]; //cargo los etf que conformaran la cartera de swensen por defecto. dichos etf todavia no tienen un porcentaje asignado dentro de la cartera
 let formularioCartera = document.getElementById("formularioCartera"); //selecciono el nodo del div de la parte del formulario correspondiente a la composicion de cartera
 let mensaje = document.createElement("p");//creo un parrafo que luego me servira para mostrar el resultado de la composicion de la cartera
 
@@ -116,11 +132,210 @@ let formulario = document.createElement("form"); //creo un form que luego sera e
 
 let botonCartera = document.getElementById("botonCartera"); //selecciono el nodo del boton que calculara la composicion de cartera
 
+let carritoETF = document.getElementById("futuro-carrito-etf");//selecciono el nodo div que va a contener el carrito de etfs
+let carritoETFHTML = document.createElement("div");//creo el div que luego sera el carrito de etfs
+
+//creo una variable que sera el html del carrito, hago esto para no repetir codigo mas adelante
+let html = `<div class="carrito-etf"> 
+<h4>ETF de acciones estadounidenses (S&P500)</h4>
+<div class="carrito-etf-accionesusa carrito-etf-gen">
+    <div class="form-check">
+        <input class="form-check-input" type="radio" id="SPY" name="accionesusa" />
+        <label class="form-check-label" for="SPY"><img src="../fotos/spy.jpg"
+                class="img-fluid imagen-etf" /></label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" id="IVV" name="accionesusa" />
+        <label class="form-check-label" for="IVV"><img src="../fotos/ivv.jpg"
+                class="img-fluid imagen-etf" /></label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" id="VOO" name="accionesusa" />
+        <label class="form-check-label" for="VOO"><img src="../fotos/voo.jpg"
+                class="img-fluid imagen-etf" /></label>
+    </div>
+</div>
+<h4>ETF de acciones de empresas que invierten en bienes raices</h4>
+<div class="carrito-etf-bienesraices carrito-etf-gen">
+    <div class="form-check">
+        <input class="form-check-input" type="radio" id="XLRE" name="bienesraices" />
+        <label class="form-check-label" for="XLRE"><img src="../fotos/xlre.jpg"
+                class="img-fluid imagen-etf" /></label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" id="IYR" name="bienesraices" />
+        <label class="form-check-label" for="IYR"><img src="../fotos/iyr.jpg"
+                class="img-fluid imagen-etf" /></label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" id="VNQ" name="bienesraices" />
+        <label class="form-check-label" for="VNQ"><img src="../fotos/vnq.jpg"
+                class="img-fluid imagen-etf" /></label>
+    </div>
+</div>
+<h4>ETF de acciones de empresas de mercados desarrollados</h4>
+<div class="carrito-etf-mercadosdesarrollados carrito-etf-gen">
+    <div class="form-check">
+        <input class="form-check-input" type="radio" id="VEA" name="mercadosdesarrollados" />
+        <label class="form-check-label" for="VEA"><img src="../fotos/vea.jpg"
+                class="img-fluid imagen-etf" /></label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" id="IDEV" name="mercadosdesarrollados" />
+        <label class="form-check-label" for="IDEV"><img src="../fotos/idev.jpg"
+                class="img-fluid imagen-etf" /></label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" id="SCHF" name="mercadosdesarrollados" />
+        <label class="form-check-label" for="SCHF"><img src="../fotos/schf.jpg"
+                class="img-fluid imagen-etf" /></label>
+    </div>
+</div>
+<h4>ETF de acciones de empresas de mercados emergentes</h4>
+<div class="carrito-etf-mercadosdesemergentes carrito-etf-gen">
+    <div class="form-check">
+        <input class="form-check-input" type="radio" id="VWO" name="mercadosemergentes" />
+        <label class="form-check-label" for="VWO"><img src="../fotos/vwo.jpg"
+                class="img-fluid imagen-etf" /></label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" id="EEM" name="mercadosemergentes" />
+        <label class="form-check-label" for="EEM"><img src="../fotos/eem.jpg"
+                class="img-fluid imagen-etf" /></label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" id="SCHE" name="mercadosemergentes" />
+        <label class="form-check-label" for="SCHE"><img src="../fotos/sche.jpg"
+                class="img-fluid imagen-etf" /></label>
+    </div>
+</div>
+<h4>ETF de bonos protegidos contra la inflacion (en USD)</h4>
+<div class="carrito-etf-bonosinflacion carrito-etf-gen">
+    <div class="form-check">
+        <input class="form-check-input" type="radio" id="IVOL" name="bonosinflacion" />
+        <label class="form-check-label" for="IVOL"><img src="../fotos/ivol.jpg"
+                class="img-fluid imagen-etf" /></label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" id="TIP" name="bonosinflacion" />
+        <label class="form-check-label" for="TIP"><img src="../fotos/tip.jpg"
+                class="img-fluid imagen-etf" /></label>
+    </div>
+    <div class="completa">
+    </div>
+</div>
+<h4>ETF de bonos del tesoro de estados unidos a largo plazo</h4>
+<div class="carrito-etf-bonosinflacion carrito-etf-gen">
+    <div class="form-check">
+        <input class="form-check-input" type="radio" id="TLT" name="bonoslargoplazo" />
+        <label class="form-check-label" for="TLT"><img src="../fotos/tlt.jpg"
+                class="img-fluid imagen-etf" /></label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" id="IEF" name="bonoslargoplazo" />
+        <label class="form-check-label" for="IEF"><img src="../fotos/ief.jpg"
+                class="img-fluid imagen-etf" /></label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" id="IUSB" name="bonoslargoplazo" />
+        <label class="form-check-label" for="IUSB"><img src="../fotos/iusb.jpg"
+                class="img-fluid imagen-etf" /></label>
+    </div>
+</div>
+</div>`;
+
+if (localStorage.getItem("listaEtfs") === null) {//si el usuario entra por primera vez a la pagina no tendra un carrito cargado, por lo tanto se ejecuta lo siguiente
+    //cargo el html de la cartera recomendada
+    carritoETFHTML.innerHTML = `<div class="carrito-etf-existente">
+    <p class="fw-bold">Nuestra cartera recomendada esta conformada por los siguientes ETFS:</p>`
+    let listaEtfs = JSON.parse(localStorage.getItem("listaEtfs"));
+    carritoETFHTML.innerHTML += `<p> SPY: ETF de acciones estadounidenses (S&P500) </p>`;
+    carritoETFHTML.innerHTML += `<p> VNQ: ETF de acciones de empresas que invierten en bienes raices </p>`;
+    carritoETFHTML.innerHTML += `<p> VEA: ETF de acciones de empresas de mercados desarrollados </p>`;
+    carritoETFHTML.innerHTML += `<p> VWO: ETF de acciones de empresas de mercados emergentes </p>`;
+    carritoETFHTML.innerHTML += `<p> TIP: ETF de bonos protegidos contra la inflacion (en USD) </p>`;
+    carritoETFHTML.innerHTML += `<p> TLT: ETF de bonos del tesoro de estados unidos a largo plazo </p>`;
+    carritoETFHTML.innerHTML += `<p class="fw-bold">¿Desea conformar una cartera usted mismo?</p>
+    <label class="switch">
+        <input type="checkbox" id="switcher">
+        <span class="slider"></span>
+    </label>
+    </div>`
+    carritoETF.append(carritoETFHTML);
+
+    let switcher = document.getElementById("switcher");//switch que sirve para que el usuario elija si quiere crear una cartera el mismo o usar la recomendada
+    let switcherCarritoETFHTML = document.createElement("div");//div que luego contendra el carrito de etf
+
+    switcher.addEventListener("click", () => {//cuando se clickea el switch se ejecuta lo siguiente
+        if (!!switcher.checked) {
+            switcherCarritoETFHTML.innerHTML = html;//se carga el carrito de etfs
+            carritoETF.append(switcherCarritoETFHTML);
+        }
+        else {
+            switcherCarritoETFHTML.innerHTML = ``;//cuando se clickea nuevamente se borra el carrito de etfs
+            carritoETF.append(switcherCarritoETFHTML);
+        }
+    });
+}
+else {//si el usuario ya habia ingresado y cargado su cartera personalizada antes, esta se recupera del local storage y se le avisa al usuario que tiene una cartera previamente cargada
+    //html que describe la cartera previamente cargada
+    carritoETFHTML.innerHTML = `<div class="carrito-etf-existente">
+    <p class="fw-bold">Usted ya tiene una cartera conformada por los siguientes ETFS:</p>`
+    let listaEtfs = JSON.parse(localStorage.getItem("listaEtfs"));
+    carritoETFHTML.innerHTML += `<p>` + listaEtfs[0].nombre + `: ETF de acciones estadounidenses (S&P500) </p>`;
+    carritoETFHTML.innerHTML += `<p>` + listaEtfs[1].nombre + `: ETF de acciones de empresas que invierten en bienes raices </p>`;
+    carritoETFHTML.innerHTML += `<p>` + listaEtfs[2].nombre + `: ETF de acciones de empresas de mercados desarrollados </p>`;
+    carritoETFHTML.innerHTML += `<p>` + listaEtfs[3].nombre + `: ETF de acciones de empresas de mercados emergentes </p>`;
+    carritoETFHTML.innerHTML += `<p>` + listaEtfs[4].nombre + `: ETF de bonos protegidos contra la inflacion (en USD) </p>`;
+    carritoETFHTML.innerHTML += `<p>` + listaEtfs[5].nombre + `: ETF de bonos del tesoro de estados unidos a largo plazo </p>`;
+    carritoETFHTML.innerHTML += `<p class="fw-bold">¿Desea conformar nuevamente una cartera?</p>
+    <label class="switch">
+        <input type="checkbox" id="switcher">
+        <span class="slider"></span>
+    </label>
+    </div>`
+    carritoETF.append(carritoETFHTML);
+
+    carteraDavidSwensen = listaEtfs;//se reemplaza la cartera recomendada por esta previamente cargada
+
+    let switcher = document.getElementById("switcher");//switch que permite al usuario elegir entre su cartera previamente cargada o armar una nueva
+    let switcherCarritoETFHTML = document.createElement("div");//div que contengra el carrito de etfs
+
+    switcher.addEventListener("click", () => {//cuando se clickea el switch se ejecuta lo siguiente
+        if (!!switcher.checked) {
+            switcherCarritoETFHTML.innerHTML = html;//se carga el html del carrito de etfs
+            carritoETF.append(switcherCarritoETFHTML);
+        }
+        else {
+            switcherCarritoETFHTML.innerHTML = ``;//cuando se vuelve a clickear el switch se borra el carrito de etfs
+            carritoETF.append(switcherCarritoETFHTML);
+        }
+    });
+}
+
 botonCartera.addEventListener("click", () => { //cuando se hace click en el boton de calcular en la seccion de composicion de cartera se ejecurara lo siguiente
     let edad = document.getElementById("edadCartera").value; //obtengo el valor de la edad
     let perfilInversor = document.getElementById("selectCartera").value; //obtengo el perfil del inversor
 
     const persona = new Persona(edad, perfilInversor); //creo un objeto persona con los datos de edad y perfil antes obtenidos del formulario
+    let nuevaCarteraDavidSwensen = [];//creo un nuevo array que contendra la cartera personalizada del usuario
+    let carritoCartera = document.getElementsByClassName("form-check-input")//obtengo los nodos de los inputs (etfs) seleccionables
+    for (let i = 0; i < carritoCartera.length; i++) {
+        if (!!carritoCartera[i].checked) {//si el input esta seleccionado se ejecuta lo siguiente
+            for (let j = 0; j < etfs.length; j++) {//recorro el array que contiene todos los etfs posibles
+                if (etfs[j].nombre === carritoCartera[i].id) {//si el id del input seleccionado (que es el nombre del etf) coincide con el nombre de alguno de los etfs del arreglo, este etf se agrega a un nuevo array que tiene los etfs que conformaran la cartera
+                    nuevaCarteraDavidSwensen.push(etfs[j]);
+                }
+            }
+        }
+    }
+
+
+    if (nuevaCarteraDavidSwensen.length === 6) {//si y solo si se seleccionaron los 6 etfs que conformaran la cartera esta se guarda en local storage
+        localStorage.setItem("listaEtfs", JSON.stringify(nuevaCarteraDavidSwensen));
+    }
+
+    if (nuevaCarteraDavidSwensen.length === 6) { carteraDavidSwensen = nuevaCarteraDavidSwensen; }//si y solo si se seleccionaron los 6 etfs que conformaran la cartera, esta reemplaza a la cartera recomendada
 
     persona.conformarCartera(carteraDavidSwensen, persona.cartera, persona.acciones, persona.bonos); //asigno el porcentaje de cada etf dentro de la cartera, teniendo en cuenta la parte de acciones y la de bonos, las cuales se calculan teniendo en cuenta la regla y la edad (esto ultimo se hace en el constructor de la clase persona)
 
@@ -142,7 +357,7 @@ botonCartera.addEventListener("click", () => { //cuando se hace click en el boto
 
     //creo el formulario de interes compuesto
     formulario.innerHTML = `<fieldset>
-    <legend>Calculadora de interes compuesto</legend>
+    <legend class="fw-bold">Calculadora de interes compuesto</legend>
     <div class="mb-3">
         <label for="disabledTextInput" class="form-label">Inversion inicial</label>
         <input type="text" id="inversionInicial" class="form-control"
@@ -181,7 +396,7 @@ botonCartera.addEventListener("click", () => { //cuando se hace click en el boto
             <option>Cada mes</option>
         </select>
     </div>
-    <button type="button" class="btn btn-primary" id="botonInteres">Calcular</button>
+    <button type="button" id="botonInteres" class="fw-bold">Calcular</button>
 </fieldset>
 <br>`;
 
@@ -242,7 +457,7 @@ botonCartera.addEventListener("click", () => { //cuando se hace click en el boto
 
         balanceFinal = Math.round(balanceFinal); //redondeo el balance final
 
-        outputInteres.innerText = "el balance final sera: " + separadorMiles(balanceFinal); //muestro el balance final, redondeado y con separador de miles
+        outputInteres.innerText = "El balance final sera: " + separadorMiles(balanceFinal); //muestro el balance final, redondeado y con separador de miles
 
         formularioInteres.append(outputInteres);//agrego el mensaje al final del div de la seccion de formulario de interes compuesto
     });
