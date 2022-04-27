@@ -141,17 +141,17 @@ let html = `<div class="carrito-etf">
 <div class="carrito-etf-accionesusa carrito-etf-gen">
     <div class="form-check">
         <input class="form-check-input" type="radio" id="SPY" name="accionesusa" />
-        <label class="form-check-label" for="SPY"><img src="../fotos/spy.jpg"
+        <label class="form-check-label" for="SPY"><img src="../javaScriptCoderhouse/fotos/spy.jpg"
                 class="img-fluid imagen-etf" /></label>
     </div>
     <div class="form-check">
         <input class="form-check-input" type="radio" id="IVV" name="accionesusa" />
-        <label class="form-check-label" for="IVV"><img src="../fotos/ivv.jpg"
+        <label class="form-check-label" for="IVV"><img src="../javaScriptCoderhouse/fotos/ivv.jpg"
                 class="img-fluid imagen-etf" /></label>
     </div>
     <div class="form-check">
         <input class="form-check-input" type="radio" id="VOO" name="accionesusa" />
-        <label class="form-check-label" for="VOO"><img src="../fotos/voo.jpg"
+        <label class="form-check-label" for="VOO"><img src="../javaScriptCoderhouse/fotos/voo.jpg"
                 class="img-fluid imagen-etf" /></label>
     </div>
 </div>
@@ -159,17 +159,17 @@ let html = `<div class="carrito-etf">
 <div class="carrito-etf-bienesraices carrito-etf-gen">
     <div class="form-check">
         <input class="form-check-input" type="radio" id="XLRE" name="bienesraices" />
-        <label class="form-check-label" for="XLRE"><img src="../fotos/xlre.jpg"
+        <label class="form-check-label" for="XLRE"><img src="../javaScriptCoderhouse/fotos/xlre.jpg"
                 class="img-fluid imagen-etf" /></label>
     </div>
     <div class="form-check">
         <input class="form-check-input" type="radio" id="IYR" name="bienesraices" />
-        <label class="form-check-label" for="IYR"><img src="../fotos/iyr.jpg"
+        <label class="form-check-label" for="IYR"><img src="../javaScriptCoderhouse/fotos/iyr.jpg"
                 class="img-fluid imagen-etf" /></label>
     </div>
     <div class="form-check">
         <input class="form-check-input" type="radio" id="VNQ" name="bienesraices" />
-        <label class="form-check-label" for="VNQ"><img src="../fotos/vnq.jpg"
+        <label class="form-check-label" for="VNQ"><img src="../javaScriptCoderhouse/fotos/vnq.jpg"
                 class="img-fluid imagen-etf" /></label>
     </div>
 </div>
@@ -177,17 +177,17 @@ let html = `<div class="carrito-etf">
 <div class="carrito-etf-mercadosdesarrollados carrito-etf-gen">
     <div class="form-check">
         <input class="form-check-input" type="radio" id="VEA" name="mercadosdesarrollados" />
-        <label class="form-check-label" for="VEA"><img src="../fotos/vea.jpg"
+        <label class="form-check-label" for="VEA"><img src="../javaScriptCoderhouse/fotos/vea.jpg"
                 class="img-fluid imagen-etf" /></label>
     </div>
     <div class="form-check">
         <input class="form-check-input" type="radio" id="IDEV" name="mercadosdesarrollados" />
-        <label class="form-check-label" for="IDEV"><img src="../fotos/idev.jpg"
+        <label class="form-check-label" for="IDEV"><img src="../javaScriptCoderhouse/fotos/idev.jpg"
                 class="img-fluid imagen-etf" /></label>
     </div>
     <div class="form-check">
         <input class="form-check-input" type="radio" id="SCHF" name="mercadosdesarrollados" />
-        <label class="form-check-label" for="SCHF"><img src="../fotos/schf.jpg"
+        <label class="form-check-label" for="SCHF"><img src="../javaScriptCoderhouse/fotos/schf.jpg"
                 class="img-fluid imagen-etf" /></label>
     </div>
 </div>
@@ -195,17 +195,17 @@ let html = `<div class="carrito-etf">
 <div class="carrito-etf-mercadosdesemergentes carrito-etf-gen">
     <div class="form-check">
         <input class="form-check-input" type="radio" id="VWO" name="mercadosemergentes" />
-        <label class="form-check-label" for="VWO"><img src="../fotos/vwo.jpg"
+        <label class="form-check-label" for="VWO"><img src="../javaScriptCoderhouse/fotos/vwo.jpg"
                 class="img-fluid imagen-etf" /></label>
     </div>
     <div class="form-check">
         <input class="form-check-input" type="radio" id="EEM" name="mercadosemergentes" />
-        <label class="form-check-label" for="EEM"><img src="../fotos/eem.jpg"
+        <label class="form-check-label" for="EEM"><img src="../javaScriptCoderhouse/fotos/eem.jpg"
                 class="img-fluid imagen-etf" /></label>
     </div>
     <div class="form-check">
         <input class="form-check-input" type="radio" id="SCHE" name="mercadosemergentes" />
-        <label class="form-check-label" for="SCHE"><img src="../fotos/sche.jpg"
+        <label class="form-check-label" for="SCHE"><img src="../javaScriptCoderhouse/fotos/sche.jpg"
                 class="img-fluid imagen-etf" /></label>
     </div>
 </div>
@@ -213,12 +213,12 @@ let html = `<div class="carrito-etf">
 <div class="carrito-etf-bonosinflacion carrito-etf-gen">
     <div class="form-check">
         <input class="form-check-input" type="radio" id="IVOL" name="bonosinflacion" />
-        <label class="form-check-label" for="IVOL"><img src="../fotos/ivol.jpg"
+        <label class="form-check-label" for="IVOL"><img src="../javaScriptCoderhouse/fotos/ivol.jpg"
                 class="img-fluid imagen-etf" /></label>
     </div>
     <div class="form-check">
         <input class="form-check-input" type="radio" id="TIP" name="bonosinflacion" />
-        <label class="form-check-label" for="TIP"><img src="../fotos/tip.jpg"
+        <label class="form-check-label" for="TIP"><img src="../javaScriptCoderhouse/fotos/tip.jpg"
                 class="img-fluid imagen-etf" /></label>
     </div>
     <div class="completa">
@@ -228,17 +228,17 @@ let html = `<div class="carrito-etf">
 <div class="carrito-etf-bonosinflacion carrito-etf-gen">
     <div class="form-check">
         <input class="form-check-input" type="radio" id="TLT" name="bonoslargoplazo" />
-        <label class="form-check-label" for="TLT"><img src="../fotos/tlt.jpg"
+        <label class="form-check-label" for="TLT"><img src="../javaScriptCoderhouse/fotos/tlt.jpg"
                 class="img-fluid imagen-etf" /></label>
     </div>
     <div class="form-check">
         <input class="form-check-input" type="radio" id="IEF" name="bonoslargoplazo" />
-        <label class="form-check-label" for="IEF"><img src="../fotos/ief.jpg"
+        <label class="form-check-label" for="IEF"><img src="../javaScriptCoderhouse/fotos/ief.jpg"
                 class="img-fluid imagen-etf" /></label>
     </div>
     <div class="form-check">
         <input class="form-check-input" type="radio" id="IUSB" name="bonoslargoplazo" />
-        <label class="form-check-label" for="IUSB"><img src="../fotos/iusb.jpg"
+        <label class="form-check-label" for="IUSB"><img src="../javaScriptCoderhouse/fotos/iusb.jpg"
                 class="img-fluid imagen-etf" /></label>
     </div>
 </div>
