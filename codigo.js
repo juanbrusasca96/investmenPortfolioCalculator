@@ -1,5 +1,7 @@
 //calcula la asignacion de activos para una cartera de inversion segun la edad y el perfil del inversor
 
+const colorLetraGraficos = 'rgb(246, 246, 234)';//constante que guarda del color de letra de los graficos
+
 class Persona {
     constructor(edad, perfil) {
         this.edad = edad;
@@ -13,12 +15,8 @@ class Persona {
         else if (perfil === "Agresivo") {
             this.regla = 120;
         }
-        if (this.edad > this.regla) { //si la edad es mayor que la regla, la edad es la regla. por ej: si pongo que tengo 105 años y utilizo la regla del 100, voy a tener como consecuencia porcentajes negativos en algunos activos, por lo tanto el maximo de la edad debe ser 100 para este caso y aunque la persona siguiera creciendo su cartera ya llego al tope de cartera conservadora
-            this.edad = this.regla;
-        }
-        if (this.edad < this.regla - 100) { //caso similar al de arriba. si por ejemplo pongo que tengo 15 años y utilizo la regla del 120, voy a obtener porcebtajes negativos en algunos activos por lo tanto el minimo de edad para este caso deberia ser 20, el cual con esta configuracion ya esta en el tope de cartera agresiva por lo tanto aunque la persona sea mas chica la cartera no puede ser mas agresiva de lo que ya es
-            this.edad = this.regla - 100;
-        }
+        this.edad > this.regla ? this.edad = this.regla : 0;//si la edad es mayor que la regla, la edad es la regla.
+        this.edad < this.regla - 100 ? this.edad = this.regla - 100 : 0;//caso similar al de arriba. si por ejemplo pongo que tengo 15 años y utilizo la regla del 120, voy a obtener porcebtajes negativos en algunos activos por lo tanto el minimo de edad para este caso deberia ser 20, el cual con esta configuracion ya esta en el tope de cartera agresiva por lo tanto aunque la persona sea mas chica la cartera no puede ser mas agresiva de lo que ya es
         this.acciones = this.regla - this.edad; //calcula el porcentaje de la parte agresiva, la que tiene en mayor medida acciones
         this.bonos = 100 - this.acciones; //calcula el porcentaje de la parte conservadora que tendra mayormente bonos
         this.cartera = []; //creo un arreglo cartera donde luego guardare los etf que la componen
@@ -55,9 +53,7 @@ class Persona {
         for (let i = 0; i < 50; i++) {
             sumaRendimiento += this.calcularRendimientoCartera(this.conformarCartera(carteraDavidSwensenFicticia, [],
                 this.calcularPorcentajeAcciones(edadFicticia), 100 - this.calcularPorcentajeAcciones(edadFicticia))); //sumo los rendimientos de los proximos 50 años, utilizo las funciones anteriores de la clase persona
-            if (edadFicticia < this.regla) { //mientras la edad sea menos que la regla, se incrementa. en caso de que la edad alcance a la regla (por ej: que esta edad ficticia llegue a 100) la edad deja de incrementarse porque llegamos al tope y la cartera no puede ser mas conservadora
-                edadFicticia++;
-            }
+            edadFicticia < this.regla ? edadFicticia++ : 0;//mientras la edad sea menos que la regla, se incrementa. en caso de que la edad alcance a la regla (por ej: que esta edad ficticia llegue a 100) la edad deja de incrementarse porque llegamos al tope y la cartera no puede ser mas conservadora
         }
         return sumaRendimiento / 50; //retorno el promedio como la suma de los rendimientos dividido la cantidad de años, 50
     }
@@ -125,7 +121,8 @@ const separadorMiles = (number) => { //funcion que sirve para agregar un separad
 const porcentajesCarteraDavidSwensen = [30, 20, 15, 5, 15, 15]; //guarda por defecto los pesos porcentuales de la cartera original de swensen
 
 let formularioCartera = document.getElementById("formularioCartera"); //selecciono el nodo del div de la parte del formulario correspondiente a la composicion de cartera
-let mensaje = document.createElement("p");//creo un parrafo que luego me servira para mostrar el resultado de la composicion de la cartera
+let mensaje = document.createElement("div");//creo un parrafo que luego me servira para mostrar el resultado de la composicion de la cartera
+let grafico = document.createElement("div");//creo el div que luego mostrara el grafico de la composicion de la cartera
 
 let formularioInteres = document.getElementById("formularioInteres"); //selecciono el nodo del div de la parte del formulario correspondiente a la calculadora de interes compuesto
 let formulario = document.createElement("form"); //creo un form que luego sera el formulario de la calculadora de interes compuesto
@@ -323,37 +320,96 @@ botonCartera.addEventListener("click", () => { //cuando se hace click en el boto
     for (let i = 0; i < carritoCartera.length; i++) {
         if (!!carritoCartera[i].checked) {//si el input esta seleccionado se ejecuta lo siguiente
             for (let j = 0; j < etfs.length; j++) {//recorro el array que contiene todos los etfs posibles
-                if (etfs[j].nombre === carritoCartera[i].id) {//si el id del input seleccionado (que es el nombre del etf) coincide con el nombre de alguno de los etfs del arreglo, este etf se agrega a un nuevo array que tiene los etfs que conformaran la cartera
-                    nuevaCarteraDavidSwensen.push(etfs[j]);
-                }
+                etfs[j].nombre === carritoCartera[i].id ? nuevaCarteraDavidSwensen.push(etfs[j]) : 0;//si el id del input seleccionado (que es el nombre del etf) coincide con el nombre de alguno de los etfs del arreglo, este etf se agrega a un nuevo array que tiene los etfs que conformaran la cartera
             }
         }
     }
 
+    nuevaCarteraDavidSwensen.length === 6 ? localStorage.setItem("listaEtfs", JSON.stringify(nuevaCarteraDavidSwensen)) : 0;//si y solo si se seleccionaron los 6 etfs que conformaran la cartera esta se guarda en local storage
 
-    if (nuevaCarteraDavidSwensen.length === 6) {//si y solo si se seleccionaron los 6 etfs que conformaran la cartera esta se guarda en local storage
-        localStorage.setItem("listaEtfs", JSON.stringify(nuevaCarteraDavidSwensen));
-    }
-
-    if (nuevaCarteraDavidSwensen.length === 6) { carteraDavidSwensen = nuevaCarteraDavidSwensen; }//si y solo si se seleccionaron los 6 etfs que conformaran la cartera, esta reemplaza a la cartera recomendada
+    nuevaCarteraDavidSwensen.length === 6 ? carteraDavidSwensen = nuevaCarteraDavidSwensen : 0;//si y solo si se seleccionaron los 6 etfs que conformaran la cartera, esta reemplaza a la cartera recomendada
 
     persona.conformarCartera(carteraDavidSwensen, persona.cartera, persona.acciones, persona.bonos); //asigno el porcentaje de cada etf dentro de la cartera, teniendo en cuenta la parte de acciones y la de bonos, las cuales se calculan teniendo en cuenta la regla y la edad (esto ultimo se hace en el constructor de la clase persona)
 
-    mensaje.innerHTML = "<br>";
+    //html que contiene el grafico de la composicion de cartera
+    grafico.innerHTML = `<div class="chart-container"> 
+                            <div class="chart-container-composicion-tamaño">
+                                <canvas id="composicionCartera" width="400" height="400"></canvas>
+                            </div>
+                        </div>`;
+
+    formularioCartera.append(grafico);
+
+    //DEBERIA ESTAR EN LIBRERIAS.JS--------
+    //grafico de la composicion de cartera usando chart js
+    const composicionCartera = document.getElementById('composicionCartera');
+    const graficoComposicionCartera = new Chart(composicionCartera, {
+        type: 'pie',
+        data: {
+            labels: persona.cartera.map((e) => e.nombre),//se cargan los nombres de los etfs que componen la cartera
+            datasets: [{
+                data: persona.cartera.map((e) => e.porcentaje),//se cargan los porcentajes de los etfs que componen la cartera
+                backgroundColor: [
+                    'rgb(50, 102, 204)',
+                    'rgb(219, 56, 21)',
+                    'rgb(253, 154, 1)',
+                    'rgb(14, 149, 28)',
+                    'rgb(0, 156, 195)',
+                    'rgb(154, 0, 153)'
+                ],
+                hoverOffset: 4,
+            }],
+        },
+        options: {
+            layout: {
+                padding: 30
+            },
+            plugins: {
+                tooltip: {
+                    enabled: false
+                },
+                datalabels: {
+                    formatter: (value) => {
+                        return `${value}%`;//se muestra el valor del pocentaje junto con el signo %
+                    },
+                    color: colorLetraGraficos
+                },
+                legend: {
+                    position: 'right',
+                    labels: {
+                        color: colorLetraGraficos,
+                        font: {
+                            size: 15
+                        }
+                    }
+                }
+            }
+
+        },
+        plugins: [ChartDataLabels]
+    });
+    //------------------
+
+    let composicion = "";
 
     for (let i = 0; i < persona.cartera.length; i++) {
-        mensaje.innerHTML += persona.cartera[i].nombre + ": " + persona.cartera[i].porcentaje + "% <br>"; //guardo los porcentajes de cada etf junto con su nombre para luego mostrarlos en el mensaje que sale por alert
+        composicion += persona.cartera[i].nombre + ": " + persona.cartera[i].porcentaje + "% <br>"; //guardo los porcentajes de cada etf junto con su nombre para luego mostrarlos en el mensaje que sale por alert
     }
-
     //mensaje que aparece mostrando los resultados de la composicion de la cartera
-    mensaje.innerHTML += "Esta cartera tiene un rendimiento promedio de " + redondearADosDecimales(persona.calcularRendimientoCartera(persona.cartera)) +
-        " %, teniendo en cuenta los rendimientos de todos los intrumentos " +
-        "(desde enero 2008, hasta diciembre 2021) y su peso porcentual dentro de la cartera.<br>" +
-        "A su vez esta cartera tiene un rendimiento promedio en los proximos 50 años de " + redondearADosDecimales(persona.calcularRendimientoPromedio50Anos()) +
-        " %, teniendo en cuenta que las posiciones de la cartera se van modificando en su valor porcentual año a año.<br>" +
-        "Puede usar alguno de estos valores (recomendamos el ultimo, ya que tiene en cuenta el cambio de las posiciones de la cartera a largo plazo) " +
-        "en nuestra calculadora de interes compuesto que se encuentra mas abajo."
+    mensaje.innerHTML = `<p> ${composicion} <br>
+        Esta cartera tiene un rendimiento promedio de  ${redondearADosDecimales(persona.calcularRendimientoCartera(persona.cartera))}
+        %, teniendo en cuenta los rendimientos de todos los intrumentos
+        (desde enero 2008, hasta diciembre 2021) y su peso porcentual dentro de la cartera.<br>
+        A su vez esta cartera tiene un rendimiento promedio en los proximos 50 años de  ${redondearADosDecimales(persona.calcularRendimientoPromedio50Anos())}
+        %, teniendo en cuenta que las posiciones de la cartera se van modificando en su valor porcentual año a año.<br>
+        Puede usar alguno de estos valores (recomendamos el ultimo, ya que tiene en cuenta el cambio de las posiciones de la cartera a largo plazo)
+        en nuestra calculadora de interes compuesto que se encuentra mas abajo.</p>`
     formularioCartera.append(mensaje);//agrego este mensaje a la parte final del div del formulario de la cartera
+
+    //cuando se detecta un mouseup en el boton calcular se destruye el grafico para crear uno nuevo
+    botonCartera.addEventListener("mouseup", () => {
+        graficoComposicionCartera.destroy();
+    })
 
     //creo el formulario de interes compuesto
     formulario.innerHTML = `<fieldset>
@@ -398,7 +454,8 @@ botonCartera.addEventListener("click", () => { //cuando se hace click en el boto
     </div>
     <button type="button" id="botonInteres" class="fw-bold">Calcular</button>
 </fieldset>
-<br>`;
+<br>
+<canvas id="interesCompuesto"></canvas>`;
 
     formularioInteres.append(formulario);//agrego el formulario de interes compuesto en la seccion (div) correspondiente
 
@@ -436,6 +493,10 @@ botonCartera.addEventListener("click", () => { //cuando se hace click en el boto
 
         balanceFinal = inversionInicial; //seteo el primer valor del balance final que sera la inversion inicial
 
+        let interesCompuesto = [];//array que contendra los datos del balance año a año que luego se cargara en el grafico de barras
+
+        let contador = 0;
+
         for (let i = 0; i < cantidadPeriodos; i++) { //recorro todos los periodos
             if (frecuenciaTasaInteres < frecuenciaAporte) { //si la frecuencia de la tasa de interes es mas chica que la de aporte, quiere decir que el periodo me lo marca la tasa de interes
                 for (let j = 0; j < vecesQueEntra; j++) { //recorro la cantidad de veces que entra la frecuencia mas chica (entre aporte y tasa de interes) dentro de cada periodo
@@ -453,12 +514,66 @@ botonCartera.addEventListener("click", () => { //cuando se hace click en el boto
                     balanceFinal = balanceFinal * tasaInteres;//calculo la tasa de interes sobre el balance. Esto se hace la cantidad de veces que la fecuencia de la tasa de interes se puede aplicar dentro del periodo
                 }
             }
+            balanceFinal = Math.round(balanceFinal); //redondeo el balance final
+            //utilizo un contador para solo agregar el balance final al array al final de cada año
+            contador < cantidadPeriodos / cantidadAnos ? contador++ : 0;
+
+            if (contador == cantidadPeriodos / cantidadAnos) {//cuando termina el caño agrego el balance final al array y vuelvo el contador a cero
+                interesCompuesto.push(balanceFinal);
+                contador = 0;
+            }
         }
 
-        balanceFinal = Math.round(balanceFinal); //redondeo el balance final
+        //DEBERIA ESTAR EN LIBRERIAS.JS--------
+        //grafico de barras que mostrara el balance final de cada año utilizando chart js
+        const interes = document.getElementById('interesCompuesto');
+        const graficoInteres = new Chart(interes, {
+            type: 'bar',
+            data: {
+                labels: Array.from({ length: cantidadAnos }, (_, i) => i + 1),//array de cada año
+                datasets: [{
+                    label: 'Balance',
+                    data: interesCompuesto,//array de balance final de cada año
+                    backgroundColor: Array.from({ length: cantidadAnos }, (_, i) => 'rgb(255, 255, 66)'),
+                    borderColor: Array.from({ length: cantidadAnos }, (_, i) => 'rgb(255, 255, 66)'),
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        ticks: {
+                            color: colorLetraGraficos,
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: colorLetraGraficos,
+                        },
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: colorLetraGraficos,
+                            font: {
+                                size: 20,
+                            }
+                        }
+                    }
+                }
+
+            }
+        });
+        //------------------
 
         outputInteres.innerText = "El balance final sera: " + separadorMiles(balanceFinal); //muestro el balance final, redondeado y con separador de miles
 
         formularioInteres.append(outputInteres);//agrego el mensaje al final del div de la seccion de formulario de interes compuesto
+        //cuando se detecta un mouseup en el boton calcular se destruye el grafico de barras para luego crear uno nuevo en el mismo lugar
+        botonInteres.addEventListener("mouseup", () => {
+            graficoInteres.destroy();
+        })
     });
 });
