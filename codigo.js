@@ -86,7 +86,7 @@ const sche = new ETF("SCHE", 0, 2.78);
 const ivol = new ETF("IVOL", 0, 6.39);
 const ief = new ETF("IEF", 0, 4.48);
 const iusb = new ETF("IUSB", 0, 3.28);
-let etfs = [spy, vnq, vea, vwo, tip, tlt, ivv, voo, xlre, iyr, idev, schf, eem, sche, ivol, ief, iusb];//creo un array que alacenara todos los etfs posibles
+let etfs = [spy, vnq, vea, vwo, tip, tlt, ivv, voo, xlre, iyr, idev, schf, eem, sche, ivol, ief, iusb];//creo un array que almacenara todos los etfs posibles
 
 let carteraDavidSwensen = [spy, vnq, vea, vwo, tip, tlt]; //cargo los etf que conformaran la cartera de swensen por defecto. dichos etf todavia no tienen un porcentaje asignado dentro de la cartera
 
@@ -117,6 +117,18 @@ const separadorMiles = (number) => { //funcion que sirve para agregar un separad
     arr[0] = arr[0].replace(exp, rep);
     return arr[1] ? arr.join('.') : arr[0];
 }
+
+let divInflacion = document.getElementById("inflacion");
+let textoInflacion = document.createElement("p");
+
+const pedirInflacion = async () => {
+    const resp = await fetch(`https://www.alphavantage.co/query?function=INFLATION&apikey=VBPH2DQHCXK2HN3H`);
+    const data = await resp.json();
+    textoInflacion.innerText = `Teniendo en cuenta que la inflación supone una erosión del ahorro, quizá la más significativa en lo que respecta a la inversión es que, independientemente de nuestro perfil, el verdadero riesgo es no estar invertido. Tan solo en el año ${data.data[0].date.slice(0, 4) - 1} la inflacion en dolares fue de un ${String(redondearADosDecimales(data.data[0].value)).replace(".", ",")}%. Aceptar la inflación es aceptar una pérdida de poder adquisitivo segura cada año.`;
+    divInflacion.append(textoInflacion);
+}
+
+pedirInflacion();
 
 const porcentajesCarteraDavidSwensen = [30, 20, 15, 5, 15, 15]; //guarda por defecto los pesos porcentuales de la cartera original de swensen
 
