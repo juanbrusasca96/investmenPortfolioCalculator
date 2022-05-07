@@ -121,6 +121,7 @@ const separadorMiles = (number) => { //funcion que sirve para agregar un separad
 let divInflacion = document.getElementById("inflacion");
 let textoInflacion = document.createElement("p");
 
+//pido el dato de inflacion mediante una API
 const pedirInflacion = async () => {
     const resp = await fetch(`https://www.alphavantage.co/query?function=INFLATION&apikey=VBPH2DQHCXK2HN3H`);
     const data = await resp.json();
