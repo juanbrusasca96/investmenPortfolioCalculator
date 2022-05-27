@@ -353,7 +353,6 @@ botonCartera.addEventListener("click", () => { //cuando se hace click en el boto
 
     formularioCartera.append(grafico);
 
-    //DEBERIA ESTAR EN LIBRERIAS.JS--------
     //grafico de la composicion de cartera usando chart js
     const composicionCartera = document.getElementById('composicionCartera');
     const graficoComposicionCartera = new Chart(composicionCartera, {
@@ -537,7 +536,6 @@ botonCartera.addEventListener("click", () => { //cuando se hace click en el boto
             }
         }
 
-        //DEBERIA ESTAR EN LIBRERIAS.JS--------
         //grafico de barras que mostrara el balance final de cada año utilizando chart js
         const interes = document.getElementById('interesCompuesto');
         const graficoInteres = new Chart(interes, {
