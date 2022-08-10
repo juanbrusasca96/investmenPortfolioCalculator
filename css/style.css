@@ -72,8 +72,8 @@ button:hover {
   margin: 5%; }
 
 .continuacion-rendimiento-tamaño {
-  width: 1200px;
-  height: 600px; }
+  width: 100%;
+  height: 100%; }
 
 .card-body {
   display: flex;
@@ -209,8 +209,8 @@ input:checked + .slider:after {
   margin-bottom: 3%; }
 
 .chart-container-tamaño {
-  width: 800px;
-  height: 450px;
+  max-width: 600px;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center; }

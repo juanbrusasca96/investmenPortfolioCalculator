@@ -11,7 +11,7 @@ const graficoCartera = new Chart(cartera, {
             'Acciones de mercados desarrollados',
             'Acciones de mercados emergentes',
             'Bonos protegidos contra la inflacion',
-            'Bonos del tesoro de estados unidos a largo plazo'
+            'Bonos del tesoro a largo plazo'
         ],
         datasets: [{
             data: [30, 20, 15, 5, 15, 15],//porcentajes de la cartera
@@ -29,11 +29,11 @@ const graficoCartera = new Chart(cartera, {
     options: {
         plugins: {
             legend: {
-                position: 'right',
+                position: 'bottom',
                 labels: {
                     color: colorLetraGrafico,
                     font: {
-                        size: 20
+                        size: 15
                     }
                 }
             }
